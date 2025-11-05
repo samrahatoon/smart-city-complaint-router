@@ -1,0 +1,125 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "complaint",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        0
+      ],
+      "id": "049e7a30-181a-4e02-9537-e8439e90c9a2",
+      "name": "Recieve complaint",
+      "webhookId": "183a3dc2-7183-4759-abb9-4b747a6e3c37"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Recieve complaint').item.json.body.email }}\ninfo@cmit.com ",
+        "subject": "={{ $json.Subject }}",
+        "emailType": "text",
+        "message": "={{ $json[\"Body \"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        368,
+        0
+      ],
+      "id": "621fd5af-ed70-4fc5-afbe-f5a7a0bc1226",
+      "name": "Send complaint to respective department",
+      "webhookId": "4f20c23a-b593-4cb2-a5de-1ced135d21a7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4lGbTQGzxjUySp7f",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9fa2b4df-026b-4d8a-8315-926092844260",
+              "name": "Subject",
+              "value": "=New complaint - issue {{ $('Recieve complaint').item.json.body.complaintType }} issue from  {{ $('Recieve complaint').item.json.body.location }} ",
+              "type": "string"
+            },
+            {
+              "id": "3b7d3d1a-3959-492f-a564-204c1b743eb2",
+              "name": "Body ",
+              "value": "=New Complaint Received:\n Name:  {{ $json.body.name }}\nEmail: {{ $json.body.email }}\nLocation: {{ $json.body.location }}\nCategory: {{ $json.body.complaintType }}\nDescription:  {{ $json.body.description }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        0
+      ],
+      "id": "e6c61ab2-1b05-4a09-bab2-f0ac2401efc8",
+      "name": "Format message"
+    },
+    {
+      "parameters": {
+        "content": "Smart City complaint router\nRecieve complaint from website and send to respective department",
+        "height": 272,
+        "width": 656
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -136,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "139e1020-428a-4bce-9096-3d1e81eb2ae0",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recieve complaint": {
+      "main": [
+        [
+          {
+            "node": "Format message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format message": {
+      "main": [
+        [
+          {
+            "node": "Send complaint to respective department",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b8d368e2-f3b1-4f01-b61b-e06f3a994310",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4a573e9967e1c8c2e200e582e3e758151a05b144783c676bc6c2368d3c37dbbf"
+  },
+  "id": "jgZ2eXqBKlBS8pLk",
+  "tags": []
+}
