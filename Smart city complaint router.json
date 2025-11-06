@@ -1,0 +1,330 @@
+{
+  "name": "Smart city complaint router",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "complaint",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        -96
+      ],
+      "id": "049e7a30-181a-4e02-9537-e8439e90c9a2",
+      "name": "Recieve complaint",
+      "webhookId": "183a3dc2-7183-4759-abb9-4b747a6e3c37"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9fa2b4df-026b-4d8a-8315-926092844260",
+              "name": "Subject",
+              "value": "=New complaint - issue {{ $('Recieve complaint').item.json.body.complaintType }} issue from  {{ $('Recieve complaint').item.json.body.location }} ",
+              "type": "string"
+            },
+            {
+              "id": "3b7d3d1a-3959-492f-a564-204c1b743eb2",
+              "name": "Body ",
+              "value": "=New Complaint Received:\n Name:  {{ $json.body.name }}\nEmail: {{ $json.body.email }}\nLocation: {{ $json.body.location }}\nCategory: {{ $json.body.complaintType }}\nDescription:  {{ $json.body.description }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        -96
+      ],
+      "id": "e6c61ab2-1b05-4a09-bab2-f0ac2401efc8",
+      "name": "Format message"
+    },
+    {
+      "parameters": {
+        "content": "Smart City complaint router\nRecieve complaint from website and send to respective department",
+        "height": 560,
+        "width": 480
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -144,
+        -224
+      ],
+      "typeVersion": 1,
+      "id": "139e1020-428a-4bce-9096-3d1e81eb2ae0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Recieve complaint').item.json.body.email }}\n",
+        "subject": "={{ $json.Subject }}",
+        "emailType": "text",
+        "message": "={{ $json[\"Body \"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        384,
+        -144
+      ],
+      "id": "621fd5af-ed70-4fc5-afbe-f5a7a0bc1226",
+      "name": "send gmail to complainer",
+      "webhookId": "4f20c23a-b593-4cb2-a5de-1ced135d21a7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4lGbTQGzxjUySp7f",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "=If  {{ $('Recieve complaint').item.json.body.complaintType }}",
+                    "rightValue": "Electricity",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e2a6afb4-0a1b-4bf4-bf2f-6aed5957a3db"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f6062a0f-92ef-4983-8f69-30a3958b9f7f",
+                    "leftValue": "=If  {{ $('Recieve complaint').item.json.body.complaintType }}",
+                    "rightValue": "Gas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "08cd58a1-5130-4240-a762-2ea6cd4886ee",
+                    "leftValue": "=If  {{ $('Recieve complaint').item.json.body.complaintType }}",
+                    "rightValue": "Garbage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        368,
+        96
+      ],
+      "id": "03d0bfed-5a7a-4289-a22f-4dc4b2c74c08",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "content": "Send e.mail torespective department",
+        "height": 560,
+        "width": 464,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        336,
+        -224
+      ],
+      "typeVersion": 1,
+      "id": "9f1abf32-f90e-43ca-becc-f999df0ea269",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "sendTo": "customerservices@sngpl.com.pk",
+        "subject": "={{ $('Format message').item.json.Subject }}",
+        "emailType": "text",
+        "message": "={{ $('Format message').item.json[\"Body \"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        -144
+      ],
+      "id": "01301597-c978-4117-b386-ea590eec1a75",
+      "name": "GAS complaint",
+      "webhookId": "b4c7d30e-242d-4d44-9fdd-e45f46380c5d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4lGbTQGzxjUySp7f",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "ccms@pitc.com.pk ",
+        "subject": "={{ $('Format message').item.json.Subject }}",
+        "emailType": "text",
+        "message": "={{ $('Format message').item.json[\"Body \"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        688,
+        32
+      ],
+      "id": "af7cdf6b-d31d-4840-8393-c8c85d65971f",
+      "name": "Electricity Complaint",
+      "webhookId": "f5da5269-642d-4ac2-a03f-80e13ddc6fbf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4lGbTQGzxjUySp7f",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "swmc@sialkot.lgpunjab.gov.pk",
+        "subject": "={{ $json.Subject }}",
+        "emailType": "text",
+        "message": "={{ $('Format message').item.json[\"Body \"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        688,
+        192
+      ],
+      "id": "f0111526-c2b0-47b3-8b19-fcb36f9f50c9",
+      "name": "Garbage complaint",
+      "webhookId": "976c4370-0dc2-4e5b-866d-e014e75c064c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4lGbTQGzxjUySp7f",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recieve complaint": {
+      "main": [
+        [
+          {
+            "node": "Format message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format message": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "send gmail to complainer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "GAS complaint",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Electricity Complaint",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Garbage complaint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "360bfaa0-e7f0-4113-a247-b12938b51e8e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4a573e9967e1c8c2e200e582e3e758151a05b144783c676bc6c2368d3c37dbbf"
+  },
+  "id": "jgZ2eXqBKlBS8pLk",
+  "tags": []
+}
